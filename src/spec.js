@@ -12,7 +12,7 @@ let gun, level, key;
 /**
  * Refresh the level instance, effectively clearing out
  * any data stored in memory
- * 
+ *
  * @returns {undefined}
  */
 const makeLevel = () => {
@@ -21,10 +21,10 @@ const makeLevel = () => {
 
 /**
  * Make a new instance of Gun but do not refresh the level instance
- * 
+ *
  * This means that any part of the Graph stored in Gun is wiped
  * out but that it is still in level (as long as makeLevel isn't also called)
- * 
+ *
  * @returns {Gun} A gun instance
  */
 const makeGun = () => {
@@ -39,7 +39,9 @@ describe('Gun using level', function() {
   this.timeout(2000);
 
   beforeEach(() => {
-    key = Math.random().toString(36).slice(2);
+    key = Math.random()
+      .toString(36)
+      .slice(2);
 
     // Refresh level and Gun's state
     makeLevel();
@@ -62,10 +64,12 @@ describe('Gun using level', function() {
 
   it('should be able to read existing data', done => {
     gun.get(key).put({ success: true });
-    makeGun().get(key).val(data => {
-      expect(data).toContain({ success: true });
-      done();
-    });
+    makeGun()
+      .get(key)
+      .val(data => {
+        expect(data).toContain({ success: true });
+        done();
+      });
   });
 
   it('should merge with existing data', done => {
@@ -84,10 +88,12 @@ describe('Gun using level', function() {
         }
 
         // verify data merge
-        makeGun().get(key).val(value => {
-          expect(value).toContain({ success: true, data: true });
-          done();
-        });
+        makeGun()
+          .get(key)
+          .val(value => {
+            expect(value).toContain({ success: true, data: true });
+            done();
+          });
       });
     });
   });
@@ -99,10 +105,13 @@ describe('Gun using level', function() {
     bob.get('friend').put(dave);
     dave.get('friend').put(bob);
 
-    bob.get('friend').get('friend').val(value => {
-      expect(value.name).toBe('Bob');
-      done();
-    });
+    bob
+      .get('friend')
+      .get('friend')
+      .val(value => {
+        expect(value.name).toBe('Bob');
+        done();
+      });
   });
 
   it('should handle sets', done => {
@@ -114,19 +123,22 @@ describe('Gun using level', function() {
     profiles.set(bob).set(dave);
 
     let count = 0;
-    makeGun().get('profiles').map().on(profile => {
-      // Check nodes for proper form
-      if (profile.name === 'Bob') {
-        expect(profile).toContain({ name: 'Bob' });
-      } else if (profile.name === 'Dave') {
-        expect(profile).toContain({ name: 'Dave' });
-      }
+    makeGun()
+      .get('profiles')
+      .map()
+      .on(profile => {
+        // Check nodes for proper form
+        if (profile.name === 'Bob') {
+          expect(profile).toContain({ name: 'Bob' });
+        } else if (profile.name === 'Dave') {
+          expect(profile).toContain({ name: 'Dave' });
+        }
 
-      // ensure all profiles are found before completing
-      count += 1;
-      if (count === 2) {
-        done();
-      }
-    });
+        // ensure all profiles are found before completing
+        count += 1;
+        if (count === 2) {
+          done();
+        }
+      });
   });
 });
